@@ -12,16 +12,14 @@ const Notfound = React.lazy(() => import("./pages/Notfound"))
 function App() {
   return (
     <>
-      <div className="container">
-        <Navbar />
-        <div className="minHeight">
-          <Routes>
-            <Route exact path="/" element={<HomePage />} />
-            <Route exact path="/wordsquiz" element={<Wordsquiz />} />
-            <Route exact path="/score" element={<Rank />} />
-            <Route exact path="*" element={<Notfound />} />
-          </Routes>
-        </div>
+      <Navbar />
+      <div className="minHeight container">
+        <Routes>
+          <Route exact path="/" element={<HomePage />} />
+          <Route exact path="/wordsquiz" element={<Wordsquiz />} />
+          <Route exact path="/score" element={<Rank />} />
+          <Route exact path="*" element={<Notfound />} />
+        </Routes>
       </div>
     </>
   );
