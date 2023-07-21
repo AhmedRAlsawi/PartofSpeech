@@ -2,16 +2,17 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import "./index.css";
 
-import HomePage from "./pages/HomePage";
-import Wordsquiz from "./pages/Wordsquiz";
-import Rank from "./pages/Rank";
-import Notfound from "./pages/Notfound";
 import Navbar from "./components/Navbar";
+
+const HomePage = React.lazy(() => import("./pages/HomePage"))
+const Wordsquiz = React.lazy(() => import("./pages/Wordsquiz"))
+const Rank = React.lazy(() => import("./pages/Rank"))
+const Notfound = React.lazy(() => import("./pages/Notfound"))
 
 function App() {
   return (
     <>
-      <div className="container ">
+      <div className="container">
         <Navbar />
         <div className="minHeight">
           <Routes>

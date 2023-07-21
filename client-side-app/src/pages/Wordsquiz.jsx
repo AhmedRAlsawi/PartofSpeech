@@ -11,6 +11,7 @@ function Wordquiz() {
   const [disabled, setDisabled] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [wrongAnswer, setWrongAnswer] = useState(false);
+  const [noSelection, setNoSelection] = useState(false);
 
   /**
    * To fetch wordslist from the API
@@ -22,7 +23,7 @@ function Wordquiz() {
       });
       const fetchedWrodList = await res.json();
       setWordList(fetchedWrodList);
-      setToggle(!toggle);
+      setToggle(prev => !prev);
       setDisabled(false);
     } catch (e) {
       console.log(e);
@@ -35,7 +36,7 @@ function Wordquiz() {
   const reset = () => {
     setQuestions(0);
     setScore(0);
-    setToggle(!toggle);
+    setToggle(prev => !prev);
     setWordList([]);
     setWrongAnswer(false);
   };
@@ -47,7 +48,10 @@ function Wordquiz() {
     if (questions === wordList.length - 1) {
       toBeDirected();
     } else {
-      setQuestions(questions + 1);
+      checkSelection(false)
+      setQuestions(prev => prev + 1);
+      if (wrongAnswer) setWrongAnswer(prev => !prev)
+      if (noSelection) setNoSelection(prev => !prev)
     }
   };
 
@@ -56,16 +60,18 @@ function Wordquiz() {
    */
   const handleSub = (e) => {
     e.preventDefault();
+    checkSelection(true)
     const data = new FormData(e.target);
     for (const n of data) {
       if (n[1] === wordList[questions].pos) {
         setWrongAnswer(false);
+        checkSelection(false)
         if (questions === wordList.length - 1) {
-          setScore(score + 1);
+          setScore(prev => prev + 1);
           setDisabled(true);
         } else {
-          setQuestions(questions + 1);
-          setScore(score + 1);
+          setQuestions(prev => prev + 1);
+          setScore(prev => prev + 1);
         }
       } else {
         setWrongAnswer(true);
@@ -80,15 +86,33 @@ function Wordquiz() {
     navigate(`/score?score=${(score / wordList.length) * 100}`);
   };
 
-  useEffect(() => {}, [wordList]);
-  useEffect(() => {}, [questions]);
+  const clearError = () => {
+    if (wrongAnswer) setWrongAnswer(false)
+    if (noSelection) setNoSelection(false)
+  }
+
+  function checkSelection(key) {
+    let elements = document.getElementsByTagName("input")
+    if (key) {
+      let checked = [...elements].filter(element => element.checked === true)
+      if (!checked.length) setNoSelection(true)
+    }
+    else {
+      for (let element of elements) {
+        element.checked = false
+      }
+    }
+  }
+
+  useEffect(() => { }, [wordList]);
+  useEffect(() => { }, [questions]);
 
   return (
     <>
       <div className="row justify-content-center">
         {toggle ? (
           <Button
-            onClick={() => reset()}
+            onClick={reset}
             className="my-2 col-2"
             variant="warning"
             size="lg"
@@ -97,7 +121,7 @@ function Wordquiz() {
           </Button>
         ) : (
           <Button
-            onClick={() => fetchData()}
+            onClick={fetchData}
             className="my-2 col-2"
             variant="success"
             size="lg"
@@ -115,27 +139,19 @@ function Wordquiz() {
             <small className="mb-2">Select an answer, then click submit</small>
             <div className="mb-2">
               <div className="progress">
-                {wordList.length === 0 ? (
-                  <div
-                    className="progress-bar"
-                    role="progressbar"
-                    aria-valuenow={`${score}`}
-                    aria-valuemin="0"
-                    style={{ width: `${(score / wordList.length) * 100}%` }}
-                    aria-valuemax={`${wordList.length}`}
-                  ></div>
-                ) : (
-                  <div
-                    className="progress-bar"
-                    role="progressbar"
-                    aria-valuenow={`${score}`}
-                    aria-valuemin="0"
-                    style={{ width: `${(score / wordList.length) * 100}%` }}
-                    aria-valuemax={`${wordList.length}`}
-                  >
-                    {(score / wordList.length) * 100} %
-                  </div>
-                )}
+                <div
+                  className={`progress-bar 
+                  ${score < (wordList.length * 0.5) ? "bg-danger"
+                      : score >= (wordList.length * 0.5) && score < (wordList.length * 0.70) ? "bg-warning"
+                        : "bg-success"}`}
+                  role="progressbar"
+                  aria-valuenow={score}
+                  aria-valuemin="0"
+                  style={{ width: `${(score / wordList.length) * 100}%` }}
+                  aria-valuemax={wordList.length}
+                >
+                  {(score / wordList.length) * 100} %
+                </div>
               </div>
             </div>
             {wordList.length !== 0 && (
@@ -144,13 +160,7 @@ function Wordquiz() {
                   {wordList[questions].word.toUpperCase()} is a/an . . . . . . .
                   . . . .
                 </div>
-                <div className="mb-2">
-                  {wrongAnswer && (
-                    <small className="text-danger">
-                      Oops, please try again
-                    </small>
-                  )}
-                </div>
+
                 <div>
                   <form onSubmit={(e) => handleSub(e)}>
                     {answers &&
@@ -161,43 +171,49 @@ function Wordquiz() {
                               key={i}
                               type="radio"
                               name="ans"
+                              id={ans}
                               value={ans}
+                              onChange={clearError}
                             />
-                            <label className="mx-2 h6" htmlFor="ans">
+                            <label className="mx-2 h6" htmlFor={ans} >
                               {ans.toUpperCase()}
                             </label>
                           </>
                         );
                       })}
 
-                    <div className="d-flex justify-content-around w-75 mx-auto">
+                    <div className="d-flex mt-3 flex-column gap-3 align-items-center w-75 mx-auto">
                       <Button
                         type="submit"
-                        className="my-2 col-2 "
+                        className="col-4 "
                         size="sm"
                         disabled={disabled}
                       >
                         Submit
                       </Button>
-                      {questions === wordList.length - 1 ? (
-                        <Button
-                          className="my-2 col-2 "
-                          size="sm"
-                          onClick={nextQuestion}
-                        >
-                          View my rank
-                        </Button>
-                      ) : (
-                        <Button
-                          className="my-2 col-2 "
-                          size="sm"
-                          onClick={nextQuestion}
-                        >
-                          Next question
-                        </Button>
-                      )}
+                      <Button
+                        className="col-4"
+                        size="sm"
+                        onClick={nextQuestion}
+                      >
+                        {questions === wordList.length - 1 ? "View my rank" : "Next question"}
+                      </Button>
                     </div>
                   </form>
+                  {wrongAnswer && (
+                    <div className="my-3 ">
+                      <small className="bg-danger text-white py-1 px-2">
+                        Oops, please try again
+                      </small>
+                    </div>
+                  )}
+                  {noSelection && (
+                    <div className="my-3 ">
+                      <small className="bg-info py-1 px-2">
+                        No option selected!
+                      </small>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
