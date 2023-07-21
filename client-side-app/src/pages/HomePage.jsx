@@ -2,15 +2,15 @@ import React from "react";
 
 function HomePage() {
   return (
-    <div className="d-flex justify-content-evenly">
-      <div className="w-50">
+    <div className="d-flex flex-wrap justify-content-evenly">
+      <div className="col-12 col-md-6">
         <img
           className="w-100 rounded"
           src="https://www.english-efl.com//wp-content/uploads/2018/12/parts-of-speech.png"
           alt="PoS"
         ></img>
       </div>
-      <div className="w-50 d-flex align-items-center">
+      <div className="col-12 col-md-5 d-flex align-items-center">
         <div className="h4 p-2 rounded border border-success">
           <p>
             In English language, words can be categorized according to their
