@@ -1,0 +1,15 @@
+a {
+    text-decoration: none;
+    color: green;
+    padding: 1em;
+    border-radius: 0px 70px 0px 70px;
+}
+
+a.active {
+    background-color: white;
+    color: black;
+}
+
+a:hover {
+    color: blue;
+}

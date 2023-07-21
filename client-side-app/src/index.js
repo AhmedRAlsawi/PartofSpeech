@@ -6,15 +6,19 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import LinearBar from "./components/LinearBar";
+import { HelmetProvider } from "react-helmet-async";
 
+const helmetContext = {}
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Suspense fallback={<LinearBar />}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </Suspense>
+    <HelmetProvider context={helmetContext} >
+      <Suspense fallback={<LinearBar />}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </Suspense>
+    </HelmetProvider>
   </React.StrictMode>
 );
 

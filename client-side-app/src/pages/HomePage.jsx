@@ -1,8 +1,9 @@
 import React from "react";
-
+import SEO from "../components/SEO"
 function HomePage() {
   return (
     <div className="d-flex flex-wrap justify-content-evenly">
+      <SEO myTitle='Part of Speech' myDesc="In English language, words can be categorized according to their syntactic functions, which is known as 'Part of Speech'. Examples: (noun, verb, adjective, ...)" />
       <div className="col-12 col-md-6">
         <img
           className="w-100 rounded"
@@ -19,7 +20,7 @@ function HomePage() {
           </p>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 

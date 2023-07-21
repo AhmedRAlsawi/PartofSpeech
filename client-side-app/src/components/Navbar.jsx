@@ -1,18 +1,39 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import "./navbar.css"
 
 function Navbar() {
   return (
-    <div className="d-flex justify-content-around py-3 bg-warning">
+    <div className="container-fluid d-flex justify-content-around py-3 bg-warning overflow-hidden">
       <div className="mx-3 h3">
-        <Link className="text-decoration-none text-black" to={"/"}>
+        <NavLink
+          to="/"
+          className={({ isActive, isPending }) =>
+            isPending ? "pending" : isActive ? "active" : ""
+          }
+        >
           Home
-        </Link>
+        </NavLink>
       </div>
       <div className="mx-3 h3">
-        <Link className="text-decoration-none text-black" to={"/wordsquiz"}>
+        <NavLink
+          to="/wordsquiz"
+          className={({ isActive, isPending }) =>
+            isPending ? "pending" : isActive ? "active" : ""
+          }
+        >
           Words Quiz
-        </Link>
+        </NavLink>
+      </div>
+      <div className="mx-3 h3">
+        <NavLink
+          to="/score"
+          className={({ isActive, isPending }) =>
+            isPending ? "pending" : isActive ? "active" : ""
+          }
+        >
+          My Score
+        </NavLink>
       </div>
     </div>
   );

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
-import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import SEO from "../components/SEO"
+
 
 function Rank() {
-  const location = useLocation();
+  const currentScore = localStorage.getItem("score")
   const navigate = useNavigate();
-  const query = location.search;
-  const score = parseInt(query.split("=")[1]);
   const [rank, setRank] = useState(0);
+
   /**
-   * To fetch rank from the API
-   */
+   * @function getScore - To fetch rank from the API
+   **/
   const getScore = async () => {
     fetch(
       "http://localhost:5000/score/rank",
@@ -20,7 +20,7 @@ function Rank() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ score }),
+        body: JSON.stringify({ score: currentScore }),
       },
       {
         mode: "cors",
@@ -34,28 +34,53 @@ function Rank() {
         console.error("Error:", error);
       });
   };
+
+  /**
+   * @function goBack - To navgiate to Quiz Page to re/Take it
+   **/
   const goBack = () => {
     navigate("/wordsquiz");
   };
+
+  /**
+   * To fetch if he already has answered the quiz before
+   **/
   useEffect(() => {
-    getScore();
-  }, [score]);
+    if (currentScore) getScore();
+    //eslint-disable-next-line
+  }, []);
 
   return (
     <div className="text-center">
-      <div className="text-primary my-4">
-        <h1>Your rank is {rank}</h1>
-      </div>
-      <div>
-        <Button
-          className="my-2 col-2"
-          variant="warning"
-          size="lg"
-          onClick={goBack}
-        >
-          Try Again
-        </Button>
-      </div>
+      <SEO myTitle='My Score' myDesc="Here you can view the final score after submitting your answers" />
+      {!currentScore ?
+        <div>
+          <Button
+            className="my-2 col-4"
+            variant="success"
+            size="lg"
+            onClick={goBack}
+          >
+            Take The Assemssment
+          </Button>
+        </div>
+        :
+        <>
+          <div className="text-primary my-4">
+            <h1>Your rank is {rank}</h1>
+          </div>
+          <div>
+            <Button
+              className="my-2 col-4"
+              variant="warning"
+              size="lg"
+              onClick={goBack}
+            >
+              Retake The Assemssment
+            </Button>
+          </div>
+        </>
+      }
     </div>
   );
 }
